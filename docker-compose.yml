@@ -1,27 +1,26 @@
-version: "3.3"
+version: '3.3'
 services:
   frontend:
     container_name: frontend
     build: ./frontend
-    restart:
-      unless-stopped
+    restart: unless-stopped
     ports:
-      - "8081:80"
+      - '8081:80'
   backend:
     container_name: backend
     build: ./backend
     networks:
       - backend-database
-    restart: "unless-stopped"
+    restart: 'unless-stopped'
     ports:
-      - "4000:3001"
+      - '4000:3001'
     env_file:
       - ./.env
     depends_on:
       - db
   db:
     container_name: postgres
-    image: "postgres"
+    image: 'postgres'
     env_file:
       - ./.env
     networks:

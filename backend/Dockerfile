@@ -3,7 +3,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm run build \
+    && rm -rf ./src \
+    && rm -rf ./.eslintrc.js \
+    && rm -rf ./node_modules
 
 FROM node:16-alpine AS backend
 WORKDIR /app

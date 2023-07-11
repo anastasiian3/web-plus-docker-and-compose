@@ -7,11 +7,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, FindManyOptions, FindOneOptions } from 'typeorm';
 import { WishesService } from 'src/wishes/wishes.service';
 import { FindUserDto } from './dto/find-user.dto';
 import { BadRequestException } from 'src/utils/bad-request';
-import bcrypt from 'bcrypt';
+import { hashPassword } from 'src/utils/hash';
 
 @Injectable()
 export class UsersService {
@@ -29,31 +29,47 @@ export class UsersService {
     return this.userRepository.findOneBy({ email });
   }
 
-  findUserByUserInfo(findUserDto: FindUserDto) {
-    const { username, email } = findUserDto;
-    if (!findUserDto) {
-      throw new BadRequestException();
-    } else if (username && email) {
-      return this.userRepository.findOne({
-        where: { username: username, email: email },
-      });
-    } else if (!email) {
-      return this.findUserByUsername(username);
-    }
-    return this.userRepository.findOneBy({ email });
+  findOneUser(data: FindOneOptions<User>) {
+    return this.userRepository.findOne(data);
   }
 
-  async createUser(createUserDto: CreateUserDto) {
-    const checkIfUserExists = await this.findUserByUserInfo(createUserDto);
-    if (checkIfUserExists) {
+  findManyUsers(data: FindManyOptions<User>) {
+    return this.userRepository.find(data);
+  }
+
+  // findUserByUserInfo(findUserDto: FindUserDto) {
+  //   const { username, email } = findUserDto;
+  //   if (!findUserDto) {
+  //     throw new BadRequestException();
+  //   } else if (username && email) {
+  //     return this.userRepository.findOne({
+  //       where: { username: username, email: email },
+  //     });
+  //   } else if (!email) {
+  //     return this.findUserByUsername(username);
+  //   }
+  //   return this.userRepository.findOneBy({ email });
+  // }
+
+ async findUserByUserInfo(data: string) {
+    return this.findManyUsers({
+      where: [{ username: data }, { email: data }],
+    });
+  }
+
+
+  async createUser(data: CreateUserDto) {
+    //const checkIfUserExists = await this.findUserByUserInfo(createUserDto);
+
+    const { username, email } = data;
+    if (await this.findOneUser({ where: [{ email }, { username }] })) {
       throw new ForbiddenException(
         'Пользователь с такой почтой или логином уже существует',
       );
     }
-    const { password, ...rest } = createUserDto;
-    const hash = await bcrypt.hash(password, 10);
-    const createdUser = this.userRepository.create({ password: hash, ...rest });
-    return await this.userRepository.save(createdUser);
+    const { password, ...rest } = data;
+    const hash = await hashPassword(password);
+    return this.userRepository.save({ password: hash, ...rest });
   }
 
   findAll() {
@@ -102,7 +118,7 @@ export class UsersService {
 
     const { password } = updateUserDto;
     if (password) {
-      const hash = await bcrypt.hash(password, 10);
+      const hash = await hashPassword(password);
       const user = await this.userRepository.update(id, {
         ...updateUserDto,
         password: hash,

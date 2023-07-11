@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Header
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,14 +21,14 @@ import { JwtGuard } from 'src/auth/guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('find')
-  findUserByUserInfo(@Body() findUserDto: FindUserDto) {
-    return this.usersService.findUserByUserInfo(findUserDto);
-  }
-
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get(':me')
+  findMe(@Req() req) {
+    return req.user;
   }
 
   @Get(':id')
@@ -40,17 +41,12 @@ export class UsersController {
     return this.usersService.findUserByUsername(username);
   }
 
-  @Get(':me')
-  findMe(@Req() req) {
-    return req.user;
-  }
-
   @Get(':me/wishes')
   findMysWishes(@Req() req) {
     return this.usersService.findUserWishes(req.user.id);
   }
 
-  @Patch(':me')
+  @Patch('/me')
   update(
     @Req() req,
     @Body() updateUserDto: UpdateUserDto,
@@ -66,5 +62,11 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  @Post('find')
+  findUserByUserInfo(@Body() findUserDto: FindUserDto) {
+    const { data } = findUserDto;
+    return this.usersService.findUserByUserInfo(data);
   }
 }
