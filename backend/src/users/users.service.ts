@@ -97,41 +97,70 @@ export class UsersService {
     return this.wishesService.findWishesById(requestedUser.id);
   }
 
-  async updateUser(
-    id: number,
-    updateUserDto: UpdateUserDto,
-    createUserDto: CreateUserDto,
-  ) {
-    const checkIfUsernameExists = await this.findUserByUsername(
-      createUserDto.username,
-    );
-    if (checkIfUsernameExists) {
-      throw new ForbiddenException('Имя пользователя занято');
-    }
 
-    const checkIfEmailExists = await this.findUserByEmail(createUserDto.email);
-    if (checkIfEmailExists) {
-      throw new ForbiddenException(
-        'Пользователь с такой почтой уже зарегистрирован',
-      );
-    }
 
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.email) {
+      const findUserByEmail = await this.findUserByEmail(updateUserDto.email);
+      if (findUserByEmail) {
+        throw new ForbiddenException(
+          'Пользователь с таким email уже существует',
+        );
+      }
+    }
+    if (updateUserDto.username) {
+      const findUserByUsername = await this.findUserByUsername(updateUserDto.username);
+      if (findUserByUsername) {
+        throw new ForbiddenException(
+          'Пользователь с таким именем уже существует',
+        );
+      }
+    }
     const { password } = updateUserDto;
     if (password) {
-      const hash = await hashPassword(password);
-      const user = await this.userRepository.update(id, {
+      return this.userRepository.update(id, {
         ...updateUserDto,
-        password: hash,
+        password: await hashPassword(password),
         updatedAt: new Date(),
       });
-      return user;
-    } else {
-      return await this.userRepository.update(id, {
-        ...updateUserDto,
-        updatedAt: new Date(),
-      });
-    }
+    } else return this.userRepository.update(id, {...updateUserDto, updatedAt: new Date(),});
   }
+
+  // async updateUser(
+  //   id: number,
+  //   updateUserDto: UpdateUserDto,
+  //   createUserDto: CreateUserDto,
+  // ) {
+  //   const checkIfUsernameExists = await this.findUserByUsername(
+  //     createUserDto.username,
+  //   );
+  //   if (checkIfUsernameExists) {
+  //     throw new ForbiddenException('Имя пользователя занято');
+  //   }
+
+  //   const checkIfEmailExists = await this.findUserByEmail(createUserDto.email);
+  //   if (checkIfEmailExists) {
+  //     throw new ForbiddenException(
+  //       'Пользователь с такой почтой уже зарегистрирован',
+  //     );
+  //   }
+
+  //   const { password } = updateUserDto;
+  //   if (password) {
+  //     const hash = await hashPassword(password);
+  //     const user = await this.userRepository.update(id, {
+  //       ...updateUserDto,
+  //       password: hash,
+  //       updatedAt: new Date(),
+  //     });
+  //     return user;
+  //   } else {
+  //     return await this.userRepository.update(id, {
+  //       ...updateUserDto,
+  //       updatedAt: new Date(),
+  //     });
+  //   }
+  // }
 
   remove(id: number) {
     return this.userRepository.delete(id);

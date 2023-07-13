@@ -12,16 +12,16 @@ import {
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
-import { LocalGuard } from 'src/auth/local.guard';
+import { JwtGuard } from 'src/auth/guard';
 
 @Controller('wishes')
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtGuard)
   @Post()
   create(@Req() req, @Body() createWishDto: CreateWishDto) {
-    return this.wishesService.createWish(req.user, createWishDto);
+    return this.wishesService.createWish(req.user.userId, createWishDto);
   }
 
   @Get()
@@ -44,7 +44,7 @@ export class WishesController {
     return this.wishesService.findWishById(+id);
   }
 
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -54,13 +54,13 @@ export class WishesController {
     return this.wishesService.update(+id, req.user, updateWishDto);
   }
 
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtGuard)
   @Post(':id/copy')
   copyWish(@Param('id') id: number, @Req() req) {
     return this.wishesService.copyWish(id, req.user);
   }
 
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtGuard)
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req) {
     return this.wishesService.remove(+id, req.user);

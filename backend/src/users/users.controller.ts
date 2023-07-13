@@ -26,9 +26,33 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':me')
+  @Get('me')
   findMe(@Req() req) {
-    return req.user;
+    return this.usersService.findOne(req.user.userId);
+  }
+
+  @Get('me/wishes')
+  findMysWishes(@Req() req) {
+    return this.usersService.findUserWishes(req.user.userId);
+  }
+
+  @Patch('/me')
+  update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(
+      +req.user.id,
+      updateUserDto
+    );
+  }
+
+  @Post('find')
+  findUserByUserInfo(@Body() findUserDto: FindUserDto) {
+    const { data } = findUserDto;
+    return this.usersService.findUserByUserInfo(data);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(+id);
   }
 
   @Get(':id')
@@ -41,32 +65,4 @@ export class UsersController {
     return this.usersService.findUserByUsername(username);
   }
 
-  @Get(':me/wishes')
-  findMysWishes(@Req() req) {
-    return this.usersService.findUserWishes(req.user.id);
-  }
-
-  @Patch('/me')
-  update(
-    @Req() req,
-    @Body() updateUserDto: UpdateUserDto,
-    createUserDto: CreateUserDto,
-  ) {
-    return this.usersService.updateUser(
-      +req.user.id,
-      updateUserDto,
-      createUserDto,
-    );
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
-
-  @Post('find')
-  findUserByUserInfo(@Body() findUserDto: FindUserDto) {
-    const { data } = findUserDto;
-    return this.usersService.findUserByUserInfo(data);
-  }
 }

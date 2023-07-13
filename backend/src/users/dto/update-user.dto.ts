@@ -5,11 +5,13 @@ import {
   IsNotEmpty,
   IsUrl,
   IsEmail,
+  IsOptional
 } from 'class-validator';
 import { PartialType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @IsOptional()
   @IsString()
   @MinLength(2, {
     message: 'Необходимо минимум 2 символа',
@@ -17,9 +19,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @MaxLength(30, {
     message: 'Необходимо максимум 30 символов',
   })
-  @IsNotEmpty()
   username: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(2, {
     message: 'Необходимо минимум 2 символа',
@@ -29,14 +31,15 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   })
   about: string;
 
+  @IsOptional()
   @IsUrl()
   avatar: string;
 
+  @IsOptional()
   @IsEmail()
-  @IsNotEmpty()
   email: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   password: string;
 }

@@ -19,9 +19,10 @@ export class WishesService {
   ) {}
 
   async createWish(user: User, createWishDto: CreateWishDto) {
-    const newWish = this.wishRepository.save({ ...createWishDto, owner: user });
-    return newWish;
+    const newWish = this.wishRepository.create({ ...createWishDto, owner: user, raised: 0 });
+    return this.wishRepository.save(newWish);
   }
+  
 
   findAll() {
     return this.wishRepository.find();

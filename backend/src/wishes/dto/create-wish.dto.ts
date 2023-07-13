@@ -23,11 +23,14 @@ export class CreateWishDto {
   @IsNotEmpty()
   link: string;
 
+  @IsUrl()
+  @IsNotEmpty()
+  image: string;
+
   @IsInt()
   @IsNotEmpty()
   price: number;
 
-  @IsInt()
   raised?: number;
 
   @IsString()
