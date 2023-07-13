@@ -18,11 +18,11 @@ services:
       - ./.env
     depends_on:
       - db
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
   db:
     container_name: postgres
     image: 'postgres'

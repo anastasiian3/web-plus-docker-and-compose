@@ -13,28 +13,30 @@ import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { LocalGuard } from 'src/auth/local.guard';
+import { JwtGuard } from 'src/auth/guard';
 
-@Controller('wishlists')
+@Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 
-  @UseGuards(LocalGuard)
+  @Get()
+  getAllWishlists() {
+    return this.wishlistsService.getAllWishlists();
+  }
+
+  @UseGuards(JwtGuard)
   @Post()
   create(@Req() req, @Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistsService.createWishlist(req.user, createWishlistDto);
+    return this.wishlistsService.createWishlist(req.user.userId, createWishlistDto);
   }
 
-  @Get()
-  findAll() {
-    return this.wishlistsService.findAll();
-  }
-
+  @UseGuards(JwtGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOneById(@Param('id') id: string) {
     return this.wishlistsService.findOneById(+id);
   }
 
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -44,7 +46,7 @@ export class WishlistsController {
     return this.wishlistsService.update(req.user, +id, updateWishlistDto);
   }
 
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtGuard)
   @Delete(':id')
   remove(@Req() req, @Param('id') id: string) {
     return this.wishlistsService.remove(req.user, +id);

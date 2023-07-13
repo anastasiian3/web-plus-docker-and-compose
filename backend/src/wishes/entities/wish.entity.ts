@@ -52,7 +52,7 @@ export class Wish extends EntityDefault {
   @MaxLength(1024, {
     message: 'Необходимо максимум 1024 символа',
   })
-  description: string;
+  description?: string;
 
   @Column({ default: 0 })
   copied: number;

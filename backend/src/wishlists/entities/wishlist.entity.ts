@@ -1,8 +1,6 @@
 import {
-  MinLength,
-  MaxLength,
+  Length,
   IsString,
-  IsNotEmpty,
   IsUrl,
 } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
@@ -13,6 +11,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable
 } from 'typeorm';
 
 @Entity()
@@ -21,29 +21,17 @@ export class Wishlist {
   id: number;
 
   @Column()
+  @Length(1, 250)
   @IsString()
-  @MinLength(1, {
-    message: 'Необходим минимум 1 символ',
-  })
-  @MaxLength(30, {
-    message: 'Необходимо максимум 30 символов',
-  })
-  @IsNotEmpty()
   name: string;
 
   @Column()
-  @IsString()
-  @MaxLength(1500, {
-    message: 'Необходимо максимум 1500 символов',
-  })
-  description: string;
-
-  @Column()
   @IsUrl()
-  @IsNotEmpty()
   image: string;
 
-  @OneToMany(() => Wish, (Wish) => Wish.wishlist)
+  //@OneToMany(() => Wish, (Wish) => Wish.wishlist)
+  @ManyToMany(() => Wish)
+  @JoinTable()
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishlists)

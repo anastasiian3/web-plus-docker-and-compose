@@ -4,6 +4,8 @@ import {
   IsUrl,
   MaxLength,
   MinLength,
+  IsOptional,
+  IsArray
 } from 'class-validator';
 
 export class CreateWishlistDto {
@@ -14,20 +16,11 @@ export class CreateWishlistDto {
   @MaxLength(250, {
     message: 'Необходимо ввести максимум 250 символов',
   })
-  @IsNotEmpty()
   name: string;
 
   @IsUrl()
-  @IsNotEmpty()
   image: string;
 
-  @MinLength(1, {
-    message: 'Необходимо ввести минимум 1 символ',
-  })
-  @MaxLength(1500, {
-    message: 'Необходимо ввести максимум 1500 символов',
-  })
-  description: string;
-
+  @IsArray()
   itemsId: number[];
 }

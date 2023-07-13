@@ -40,5 +40,5 @@ export class CreateWishDto {
   @MaxLength(1024, {
     message: 'Необходимо ввести максимум 1024 символа',
   })
-  description: string;
+  description?: string;
 }

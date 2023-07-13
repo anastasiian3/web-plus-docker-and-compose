@@ -8,7 +8,7 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
-import { Repository } from 'typeorm';
+import { Repository, FindManyOptions, In } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -23,6 +23,9 @@ export class WishesService {
     return this.wishRepository.save(newWish);
   }
   
+  findManyWishes(query: FindManyOptions<Wish>) {
+    return this.wishRepository.find(query);
+  }
 
   findAll() {
     return this.wishRepository.find();
