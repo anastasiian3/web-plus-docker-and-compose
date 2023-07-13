@@ -37,6 +37,17 @@ export class UsersService {
     return this.userRepository.find(data);
   }
 
+  async findUserWishes(userId: number) {
+    const user = await this.findOneUser({
+      where: { id: userId },
+      relations: {
+        wishes: { owner: true },
+      },
+    });
+
+    return user.wishes;
+  }
+
   // findUserByUserInfo(findUserDto: FindUserDto) {
   //   const { username, email } = findUserDto;
   //   if (!findUserDto) {
@@ -80,22 +91,22 @@ export class UsersService {
     return this.userRepository.findOneBy({ id });
   }
 
-  async findUserWishes(id: number) {
-    const requestedUser = await this.findOne(id);
-    if (!requestedUser) {
-      throw new NotFoundException('Пользователя не существует');
-    }
-    return this.wishesService.findWishesById(id);
-  }
+  // async findUserWishes(id: number) {
+  //   const requestedUser = await this.findOne(id);
+  //   if (!requestedUser) {
+  //     throw new NotFoundException('Пользователя не существует');
+  //   }
+  //   return this.wishesService.findWishesById(id);
+  // }
 
-  async findWishesBasedOnUsername(username: string) {
-    const requestedUser = await this.findUserByUsername(username);
+  // async findWishesBasedOnUsername(username: string) {
+  //   const requestedUser = await this.findUserByUsername(username);
 
-    if (!requestedUser) {
-      throw new NotFoundException('Пользователя не существует');
-    }
-    return this.wishesService.findWishesById(requestedUser.id);
-  }
+  //   if (!requestedUser) {
+  //     throw new NotFoundException('Пользователя не существует');
+  //   }
+  //   return this.wishesService.findWishesById(requestedUser.id);
+  // }
 
 
 

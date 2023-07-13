@@ -17,13 +17,13 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - postgres
+      - db
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
-  postgres:
+  db:
     container_name: postgres
     image: 'postgres'
     env_file:
@@ -33,6 +33,8 @@ services:
     restart: unless-stopped
     volumes:
       - pg_data:/var/lib/postgresql/data/pgdata
+    environment:
+      - POSTGRES_PASSWORD=student
 volumes:
   pg_data:
     driver: local

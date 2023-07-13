@@ -33,7 +33,7 @@ export class UsersController {
 
   @Get('me/wishes')
   findMysWishes(@Req() req) {
-    return this.usersService.findUserWishes(req.user.userId);
+    return this.usersService.findUserWishes(req.user.id);
   }
 
   @Patch('/me')
