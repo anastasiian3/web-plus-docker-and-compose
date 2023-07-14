@@ -12,7 +12,7 @@ module.exports = {
   apps: [
     {
       name: 'kpd',
-      script: './dist/app.js',
+      script: './dist/main.js',
     },
   ],
   deploy: {
